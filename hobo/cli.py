@@ -5,7 +5,7 @@ from copy import deepcopy
 from argparse import ArgumentParser
 
 from hobo.api import Hobo
-
+from commandsession import CommandSession
 
 def main():
     """cli entry point.
@@ -146,7 +146,9 @@ def main():
         if not resp.strip() == 'y':
             return
 
-    hobo = Hobo(verbose=verbose, debug=debug)
+    env = None if not debug else {'LIBGUESTFS_DEBUG': '1'}
+    session = CommandSession(stream=verbose, env=env)
+    hobo = Hobo(session=session)
     func = getattr(hobo, command)
     return func(**args)
 

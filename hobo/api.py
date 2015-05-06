@@ -26,8 +26,8 @@ class Hobo(object):
     template_file = config.template_file
     db = config.db
 
-    def __init__(self, verbose=False, debug=False):
-        self.session = CommandSession(stream=verbose)
+    def __init__(self, session=None):
+        self.session = session or CommandSession()
         self.libvirt = Libvirt(
             config.bridge_device,
             images_dir=self.images_dir,
@@ -37,7 +37,7 @@ class Hobo(object):
             template_file=self.template_file,
             libvirt=self.libvirt,
         )
-        self.debug = debug
+
         self._check_template_file()
 
     def base(self, image_name, image_desc, base_os, upload=None, install=None, run=None, size=None, compress=True):
