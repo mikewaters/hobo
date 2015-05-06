@@ -39,7 +39,7 @@ class Hobo(object):
         self.debug = debug
         self._check_template_file()
 
-    def base(self, image_name, images_desc, base_os, upload=None, install=None, run=None, size=None, compress=True):
+    def base(self, image_name, image_desc, base_os, upload=None, install=None, run=None, size=None, compress=True):
         """Generate a base os image built upon another base image.
         """
 
