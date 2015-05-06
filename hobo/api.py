@@ -110,7 +110,7 @@ class Hobo(object):
                     print('Warning: this can take a long time.')
                     _stream = self.session._stream
                     self.session._stream = True
-                    self.session.call("xz {} {}".format(config.compress_flag, image_path))
+                    self.session.call("xz {} {}".format(config.compress_flags, image_path))
                     self.session._stream = _stream
                     image_path = self.libvirt.disk_path(image_name) + '.xz'
                     compressed_size = os.stat(os.path.join(image_path)).st_size
