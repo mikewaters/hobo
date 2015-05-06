@@ -29,6 +29,7 @@ class Hobo(object):
     def __init__(self, verbose=False, debug=False):
         self.session = CommandSession(stream=verbose)
         self.libvirt = Libvirt(
+            config.bridge_device,
             images_dir=self.images_dir,
             session=self.session
         )

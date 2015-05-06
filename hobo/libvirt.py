@@ -211,12 +211,14 @@ class NotBooted(Exception):
 
 class Domain(CommandSessionMixin):
 
-    def __init__(self, name, session=None):
+    def __init__(self, name, bridge_device, session=None):
         super(Domain, self).__init__(session)
         self.name = name
         if not self.exists:
             raise ValueError('invalid domain name')
         self.states = [(time.time(), self.state)]
+        #TODO; this does not belong here
+        self.bridge_device = brideg_device
 
     def stop(self):
         """Check if a domain is running."""
@@ -310,7 +312,7 @@ class Domain(CommandSessionMixin):
         or at least add a newline or something. This is called in a long loop .
         """
         cmd = "virsh domiflist {} |grep {} |awk '{{print $5}}' |perl -pe 'chomp'".format(
-            self.name, config.bridge_device
+            self.name, self.bridge_device
         )
 
         return self.session.check_output(cmd)
@@ -361,14 +363,15 @@ class Domain(CommandSessionMixin):
 
 class Libvirt(CommandSessionMixin):
 
-    def __init__(self, images_dir=None, session=None):
+    def __init__(self, bridge_device, images_dir=None, session=None):
         super(Libvirt, self).__init__(session)
         self.images_dir = images_dir or LIBVIRT_IMAGES_DIR
         if not os.path.exists(self.images_dir):
             mkdir_all(self.images_dir)
+        self.bridge_device = bridge_device
 
     def get_domain(self, name):
-        return Domain(name, session=self.session)
+        return Domain(name, self.bridge_device, session=self.session)
 
     def get_domains(self, running=True):
         """Get a list of all current domains."""
