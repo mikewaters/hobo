@@ -115,11 +115,11 @@ def main():
 
     # Perform some extra arg validation crapola that is
     # tough to do with argparse.
-    if command == 'base' and 'image_file' in kwargs:
+    if command == 'base' and 'image_file' in args:
         # read data from yaml file instead of cli
-        assert os.path.exists(kwargs['image_file'])
+        assert os.path.exists(args['image_file'])
 
-        if not kwargs['template']:
+        if not args['template']:
             print('--template is required with --from-file')
             return False
 
