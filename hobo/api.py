@@ -106,7 +106,7 @@ class Hobo(object):
                 ## compress the image?
                 compressed_size = None
                 if compress:
-                    print('Compressing using {}'.format(config.compress_flag))
+                    print('Compressing using {}'.format(config.compress_flags)
                     print('Warning: this can take a long time.')
                     _stream = self.session._stream
                     self.session._stream = True
