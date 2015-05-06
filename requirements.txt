@@ -1,0 +1,7 @@
+pyxdg
+boltons
+six
+#commandsession
+-e git+git@github.com:mikewaters/command-session.git#egg=commandsession
+pyyaml
+pytest
