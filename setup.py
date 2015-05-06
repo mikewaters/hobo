@@ -18,11 +18,13 @@ def get_xdg_hobo_config():
                 raise
     return xdg_config_home
 
+#FIXME this resolves to /usr/local/lib/python2.7/dist-packages/Users
+# disabled for now
 XDG_HOBO_HOME = get_xdg_hobo_config()
 
 setup(
     name='hobo',
-    version='0.1',
+    version='0.1.1',
     description="Wrapper around libguestfs/libvirt for specific workflow.",
     author="Mike Waters",
     author_email='robert.waters@gmail.com',
@@ -45,7 +47,7 @@ setup(
         'console_scripts': ['hobo = hobo.cli:main'],
     },
     install_requires=['pyyaml', 'pyxdg', 'boltons', 'six', 'commandsession'],
-    data_files=[
-        (XDG_HOBO_HOME, ['build/hobo.ini'])
-    ]
+    #data_files=[
+    #    (XDG_HOBO_HOME, ['build/hobo.ini'])
+    #]
 )
