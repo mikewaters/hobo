@@ -97,6 +97,10 @@ class Hobo(object):
 
             try:
 
+                if size:
+                    print('Creating sparse image')
+                    self.libgf.virt_sparsify(image_path)
+
                 image_path = self.libvirt.disk_path(image_name)
                 print('Running sysprep')
                 self.libgf.virt_sysprep_img(
