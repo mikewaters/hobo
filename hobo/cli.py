@@ -136,7 +136,7 @@ def main():
                 args[k] = v
 
     elif command == 'base':
-        if kwargs['template']:
+        if args['template']:
             print('--template not supported unless --image-file')
             return False
 
