@@ -218,7 +218,7 @@ class Domain(CommandSessionMixin):
             raise ValueError('invalid domain name')
         self.states = [(time.time(), self.state)]
         #TODO; this does not belong here
-        self.bridge_device = brideg_device
+        self.bridge_device = bridge_device
 
     def stop(self):
         """Check if a domain is running."""
