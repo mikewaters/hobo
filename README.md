@@ -1,5 +1,5 @@
 # README
-
+note that data_files does not work with pip -e
 ## Install
 ### Ubuntu 14.10
 
