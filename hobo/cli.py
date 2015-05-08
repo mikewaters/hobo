@@ -107,6 +107,28 @@ def main():
         help='Which domain to delete.'
     )
 
+    package_parser = subparsers.add_parser('package')
+    package_parser.add_argument(
+        'domain_name',
+        help='Which domain to package.'
+    )
+    package_parser.add_argument(
+        'image_name',
+        help='Name of resulting template.'
+    )
+    package_parser.add_argument(
+        'image_desc',
+        help='Description of resulting template.'
+    )
+    package_parser.add_argument(
+        '--install', action='store_true',
+        help='Install as local template?.'
+    )
+    package_parser.add_argument(
+        '--compress', action='store_true',
+        help='Compress?.'
+    )
+
     args = vars(argparser.parse_args())
     
     verbose = args.pop('verbose')

@@ -245,6 +245,104 @@ class Hobo(object):
 
         return True
 
+
+    def package(self, domain_name, image_name, image_desc, install=False, compress=True):
+        """Grab a domain's disk and package it.
+        #TODO: this disk abstraxtion needs a fixup.
+        """
+
+        if self.libgf.template_available(image_name):
+            raise ValueError('Template for base image {} exists.'.format(image_name))
+
+        if self.libvirt.disk_exists(image_name):
+            raise ValueError('Disk for base image {} exists.'.format(image_name))
+
+        dom = self.libvirt.get_domain(domain_name)
+        
+        if not dom.stopped:
+            print('Error: cannot package a domain that is running')
+            return False
+
+        dest = self.libvirt.disk_path(image_name)
+
+        print('Copying disk')
+        self.session.check_call([
+            'cp', '--preserve=all',
+            self.libvirt.disk_path(domain_name),
+            dest
+        ])
+
+        try:
+            print('Creating sparse image')
+            self.libgf.virt_sparsify(dest)
+
+            print('Running sysprep')
+            sysprep_ops = [
+                'bash_history',
+                'udev-persistent-net',
+                'logfiles',
+                'machine-id',
+                'net-hostname',
+                'package-manager-cache',
+                'ssh-hostkeys',
+                #'ssh-userdir',  # req'd for ansible.key
+                'tmp-files',
+                'utmp',
+            ]
+            #self.libgf.virt_sysprep_img(
+            #    sysprep_ops, image_name
+            #)
+            image_path = self.libvirt.disk_path(image_name)
+            image_sz = os.stat(os.path.join(image_path)).st_size
+            compressed_size = None
+            if compress:
+                print('Compressing using {}'.format(config.compress_flags))
+                print('Warning: this can take a long time.')
+                _stream = self.session._stream
+                self.session._stream = True
+                self.session.call("xz {} {}".format(config.compress_flags, image_path))
+                self.session._stream = _stream
+                image_path = self.libvirt.disk_path(image_name) + '.xz'
+                compressed_size = os.stat(os.path.join(image_path)).st_size
+
+            # manually remove this template from the cache, it is flaky 
+            self.libgf.delete_cache(image_name)
+            
+            # get arch of base os to populate arch of our new image
+            #FIXME
+            arch = 'x86_64'
+            #arch = self.libgf.get_arch(base_os)
+
+            if install:
+                self.libgf.generate_template(
+                    image_name,
+                    image_desc,
+                    arch,
+                    image_sz,
+                    self.template_file,
+                    csz=compressed_size
+                )
+            else:
+
+                templ = self.libgf.get_template(
+                    image_name,
+                    image_desc,
+                    arch,
+                    image_sz,
+                    self.template_file,
+                    csz=compressed_size
+                )
+                print(templ)
+
+        except (Exception, KeyboardInterrupt) as ex:
+
+            print(ex)
+            self.session.call(['rm', '-f', dest]) 
+            return False
+        
+        return True
+
+
     def info(self, domain=None, format=None):
         """Print some info about a domain"""
         if not self.db.read('domains'):
