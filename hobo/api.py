@@ -133,16 +133,16 @@ class Hobo(object):
                     self.template_file,
                     csz=compressed_size
                 )
-            except CommandError as ex:
-                print(ex)
-                raise
+            #except CommandError as ex:
+            #    print(ex)
+            #    raise
             except (Exception, KeyboardInterrupt) as ex:
-                print(ex.message)
+                print(ex)
                 # remove the image we created
                 try:
                     #FIXME - sometimes this doesnt work
                     print('Cleanup after error')
-                    self.session.call('rm -f {}'.format(image_path))
+                    self.session.call('rm -f {}'.format(self.libvirt.disk_path(image_name)))
                 except: pass
                 raise
 
@@ -202,7 +202,7 @@ class Hobo(object):
         try:
             if size:
                 print('Creating sparse image')
-                self.libgf.virt_sparsify(image_path)
+                self.libgf.virt_sparsify(self.libvirt.disk_path(name))
 
             print('Creating domain')
             self.libgf.virt_import(
