@@ -13,6 +13,7 @@ def main():
     argparser = ArgumentParser()
     argparser.add_argument('--verbose', action='store_true', help='stream stdout/stderr', default=False)
     argparser.add_argument('--debug', action='store_true', help='debug', default=False)
+    argparser.add_argument('--dump', action='store_true', help='Dump commands', default=False)
 
     subparsers = argparser.add_subparsers(dest='command')
 
@@ -133,6 +134,7 @@ def main():
     
     verbose = args.pop('verbose')
     debug = args.pop('debug')
+    dump = args.pop('dump')
     command = args.pop('command')
 
     # Perform some extra arg validation crapola that is
@@ -172,6 +174,10 @@ def main():
     session = CommandSession(stream=verbose, env=env)
     hobo = Hobo(session=session)
     func = getattr(hobo, command)
-    return func(**args)
+    ret = func(**args)
+    if dump:
+        for item in session.command_dump:
+            print(item)
+    return 0 if ret else 1
 
 
