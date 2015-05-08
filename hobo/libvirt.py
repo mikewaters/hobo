@@ -77,6 +77,46 @@ class Libguestfs(CommandSessionMixin):
             if record[0] == template:
                 return record
 
+    def get_template(self, image_name, image_desc, arch, image_sz, template_file, csz=None):
+        """TODO: refactor shared functionaity with generate_
+        Add an os template to the template file.
+        There are more fields that I am not using, see:
+            http://libguestfs.org/virt-builder.1.html#create-the-templates
+        """
+        #TODO: write this atomically, so the record can be removed if there
+        # is a problem
+
+        template = '\n'.join((
+            "[{name}]",
+            "name={desc}",
+            "arch={arch}",
+            "file={path}",
+            "format={fmt}",
+            "size={size}",
+            #TODO is this always the same? what are the preconditions?
+            "expand={expand}"
+        ))
+        if csz:
+            template = template + "\ncompressed_size={csize}"
+        template = template + '\n'
+
+        #TODO: can use qemu-img info <path> to get this info
+        #image_sz = os.stat(os.path.join(image_path)).st_size
+
+        templ = template.format(
+            name = image_name, 
+            desc = image_desc,
+            arch = arch, 
+            # this is expected to be a path *relative* to this file
+            path = '{}.qcow2{}'.format(image_name, '.xz' if csz else ''), 
+            fmt = 'qcow2',
+            size = image_sz,
+            csize = csz,
+            expand = '/dev/vda3',
+        )
+        templ = templ + '\n'  # required
+        return templ
+
     def generate_template(self, image_name, image_desc, arch, image_sz, template_file, csz=None):
         """Add an os template to the template file.
         There are more fields that I am not using, see:
