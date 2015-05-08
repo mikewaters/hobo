@@ -170,8 +170,8 @@ def main():
         if not resp.strip() == 'y':
             return
 
-    env = None if not debug else {'LIBGUESTFS_DEBUG': '1'}
-    session = CommandSession(stream=verbose, env=env)
+    env = {} if not debug else {'LIBGUESTFS_DEBUG': '1'}
+    session = CommandSession(stream=verbose)  # , env=env)  #FIXME this hangs due to proxy.
     hobo = Hobo(session=session)
     func = getattr(hobo, command)
     ret = func(**args)
