@@ -55,8 +55,8 @@ class Hobo(object):
         
         params = ParamDict()
 
-        if self.debug:
-            params['root_password'] = '.hobo'
+        #if self.debug:
+        #    params['root_password'] = '.hobo'
 
         if install: params['install'] = install
 
@@ -158,12 +158,14 @@ class Hobo(object):
         TODO: if size is not provided, get size somehow to store in db
         TODO: need to add users pubkey to auth keys automatically
         TODO: need to add a github privkey to the root account in v
+
+        note - resize will fail if size given is less than current size.  issue?
         """
 
         params = ParamDict()
         
-        if self.debug:
-            params['root_password'] = '.hobo'
+        #if self.debug:
+        #    params['root_password'] = '.hobo'
 
         if size:
             print((
