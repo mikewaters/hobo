@@ -1,30 +1,48 @@
 # README
-note that data_files does not work with pip -e
+Hobo - do stuff.
+
 ## Install
+Only ubuntu >=14.10 is currently working.
+
 ### Ubuntu 14.10
+    
+    ./install/ubuntu.sh
 
-    yum install nmap
-    sudo chmod +r /boot/vmlinuz-`uname -r`  # ref: https://bugs.launchpad.net/ubuntu/+source/linux/+bug/759725
+### Network bridge
+Hobo requires a network bridge named 'hob0' (configurable).
 
-For jow, pip install --process-dependency-links -e ../hobo --upgrade until commandsession is in pypi
+#### Creating the bridge
+Replace:
 
-	chmod o+w /etc/virt-builder/repos.d
-### Hacks
-On ubuntu:
+    auto em1
+    iface em1 inet dhcp
+
+With:
+    auto em1
+    iface em1 inet manual
+
+    auto br0
+    iface br0 inet dhcp
+        bridge_ports em1
+        bridge_stp off
+        bridge_fd 0
+        bridge_maxwait 0
+
+#### Configuring the bridge
+
+Add to /etc/sysctl.conf:
+
+    net.bridge.bridge-nf-call-ip6tables = 0
+    net.bridge.bridge-nf-call-iptables = 0
+    net.bridge.bridge-nf-call-arptables = 0
 
 
-NOPE:
-##Download libguestfs 1.29 and use /usr as prefix for ./configure,
-##because the (old-ass) ubuntu package is installed there, but
-##libguestfs defaults to /usr/local (so you will have two versions)
-Just install package version
+Run:  
 
+    sysctl -p /etc/sysctl.conf  
 
-MAY Need to make libvirt images dir r/w/x for non-root users.
-Currently thid means chmod 777.  
+#### Using openvswitch
+It's possible, see bridge-ovs.txt
 
-However, the right way to do this is to have libvirtd run
-as a specific low-priv user, try specifying user/group in /etc/libvirt/qemu.conf.
-^ didnt work, couldnt get the hypervisor to start.
-
-see: http://libvirt.org/drvqemu.html#securityselinux
+### Local configuration
+Keep site-specific config in local/ directory.

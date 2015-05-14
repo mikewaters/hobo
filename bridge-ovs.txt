@@ -1,0 +1,36 @@
+Using an Openvswitch bridge
+
+It is possible, but requires hacks to the domain's network XML
+
+    apt-get install openvswitch-switch
+
+    # create the bridge device and configure it
+    ovs-vsctl add-br $viface
+    cat << EOF >> /etc/network/interfaces
+    auto hob0-ovs
+    iface hobo-ovs inet static
+       address 172.16.11.1
+       network 172.16.11.0
+       netmask 255.255.255.0
+       broadcast 172.16.11.255
+
+    iface hob0-ovs inet6 static
+       address 2001:xxxx:xxxx:1::1
+       netmask 64
+    EOF
+
+    # map bridge to physical adapter (assuming em1)
+    ovs-vsctl add-port hob0 em1
+
+    # assimilate!
+    # swap the physical iface's config into the ovs iface
+    ipaddr=`ifconfig em1 | grep "inet addr" | awk -F: '{print $2}' | awk '{print $1}'`
+    ifconfig em1 0.0.0.0
+    ifconfig hob0-ovs $addr
+    killall dhclient
+    dhclient hob0-ovs &
+
+Libvirt domain XML:
+
+http://git.openvswitch.org/cgi-bin/gitweb.cgi?p=openvswitch;a=blob_plain;f=INSTALL.Libvirt;hb=HEAD
+
