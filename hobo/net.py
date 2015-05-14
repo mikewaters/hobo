@@ -64,7 +64,7 @@ def mac_in_arp_cache(mac):
     ))
 
 
-def populate_arp_cache(dev='br0'):
+def populate_arp_cache(dev='hob0'):
     """Scan the local subnet, which should populate arp cache.
     Cache duration is at cat /proc/sys/net/ipv4/neigh/default/gc_stale_time
     """

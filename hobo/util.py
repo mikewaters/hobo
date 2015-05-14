@@ -78,7 +78,7 @@ class Config(object):
         self._cfg = ConfigParser()
         self._cfg.read(config_file)
 
-        self.bridge_device = self.get('config', 'bridge_device') or 'br0'
+        self.bridge_device = self.get('config', 'bridge_device') or 'hob0'
         self.base_mem = self.get('config', 'base_mem') or '1024'
         self.base_cpu = self.get('config', 'base_cpu') or '1'
 
