@@ -163,8 +163,7 @@ class Hobo(object):
 
         params = ParamDict()
         
-        #if self.debug:
-        #    params['root_password'] = '.hobo'
+        #params['root_password'] = 'password:.hobo'
 
         if size:
             print((
@@ -195,6 +194,7 @@ class Hobo(object):
         self.libgf.virt_build(
             name,
             base_os,
+            'selinux-relabel',
             hostname=hostname,
             **params
         )
