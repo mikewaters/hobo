@@ -356,7 +356,11 @@ class Hobo(object):
 
         records = {}
         for item in domains:
-            domain_obj = self.libvirt.get_domain(item)
+            try:
+                domain_obj = self.libvirt.get_domain(item)
+            except CommandError:
+                #FIXME - the database is out of sync with what exists in system
+                continue
             state = domain_obj.state
             if not domain_obj.ip_address and state=='running':
                 state = 'booting'
